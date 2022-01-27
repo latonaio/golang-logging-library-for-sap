@@ -1,6 +1,6 @@
 # golang-logging-library-for-sap
 
-golang-logging-library-for-sap は [sap-sandbox](https://github.com/latonaio/sap-sandbox)のリソースにおいて、 Go ランタイム の マイクロサービス の ログ を出力する際に、ログの json フォーマットを統一するためのライブラリです。
+golang-logging-library-for-sap は [sap-sandbox](https://github.com/latonaio/sap-sandbox) のリソースにおいて、 Go ランタイム の マイクロサービス の ログ を出力する際に、ログの json フォーマットを統一するためのライブラリです。
 
 ## 動作環境
 
@@ -9,6 +9,113 @@ golang-logging-library-for-sap は [sap-sandbox](https://github.com/latonaio/sap
 * OS: Linux OS    
 * CPU: ARM/AMD/Intel   
 * Golang Runtime
+
+## golang-logging-library-for-sap のソースコードベース
+golang-logging-library-for-sap は、[golang-logging-library](https://github.com/latonaio/avis-golang-logging-library) のソースコードをベースとして作成されています。  
+
+## golang-logging-library-for-sap の機能
+golang-logging-library-for-sap は、[golang-logging-library](https://github.com/latonaio/avis-golang-logging-library) の機能に加えて、次の機能を有しています。
+
+* SAPの OPEN API(ODATA) における日付/時間項目のJSONフォーマットを一般的な日付時間のJSONフォーマットに変換
+
+golang-logging-library が扱うJSONフォーマットに、SAP の日付/時間書式である項目が含まれる場合、次の例にある項目値の変換を行います。  
+なお、SAPの日付/時間項目であるかどうかの判断基準は、項目値が <"/Date("で始まり>、かつ、<")/"で終わり>、かつ、<これらの間の値が全て数字である>、の条件となっています。  
+
+変換前のフォーマット例：
+（※下記の "CreationDate"、"LastChangeDate"が変換前の項目と項目値の例です）
+```
+{
+	"cursor": "/Users/latona2/bitbucket/sap-api-integrations-product-master-reads/SAP_API_Caller/caller.go#L98",
+	"function": "sap-api-integrations-product-master-reads/SAP_API_Caller.(*SAPAPICaller).General",
+	"level": "INFO",
+	"message": [
+		{
+			"Product": "A001",
+			"IndustrySector": "M",
+			"ProductType": "SERV",
+			"BaseUnit": "AU",
+			"ValidityStartDate": "",
+			"ProductGroup": "A001",
+			"Division": "00",
+			"GrossWeight": "0.000",
+			"WeightUnit": "KG",
+			"SizeOrDimensionText": "",
+			"ProductStandardID": "",
+			"CreationDate": "/Date(1466380800000)/",
+			"LastChangeDate": "/Date(1491868800000)/",
+			"IsMarkedForDeletion": false,
+			"NetWeight": "0.000",
+			"ChangeNumber": "",
+			"to_Description": "https://sandbox.api.sap.com/s4hanacloud/sap/opu/odata/sap/API_PRODUCT_SRV/A_Product('A001')/to_Description"
+		}
+	],
+	"time": "2022-01-08T10:38:23.402329+09:00"
+}
+```
+
+変換後のフォーマット例：
+（※下記の "CreationDate"、"LastChangeDate"が変換後の項目と項目値の例です）
+```
+{
+	"cursor": "/Users/latona2/bitbucket/sap-api-integrations-product-master-reads/SAP_API_Caller/caller.go#L98",
+	"function": "sap-api-integrations-product-master-reads/SAP_API_Caller.(*SAPAPICaller).General",
+	"level": "INFO",
+	"message": [
+		{
+			"Product": "A001",
+			"IndustrySector": "M",
+			"ProductType": "SERV",
+			"BaseUnit": "AU",
+			"ValidityStartDate": "",
+			"ProductGroup": "A001",
+			"Division": "00",
+			"GrossWeight": "0.000",
+			"WeightUnit": "KG",
+			"SizeOrDimensionText": "",
+			"ProductStandardID": "",
+			"CreationDate": "2016-06-20T09:00:00+09:00",
+			"LastChangeDate": "2017-04-11T09:00:00+09:00",
+			"IsMarkedForDeletion": false,
+			"NetWeight": "0.000",
+			"ChangeNumber": "",
+			"to_Description": "https://sandbox.api.sap.com/s4hanacloud/sap/opu/odata/sap/API_PRODUCT_SRV/A_Product('A001')/to_Description"
+		}
+	],
+	"time": "2022-01-08T10:38:23.402329+09:00"
+}
+```
+
+## golang-logging-library-for-sap の Output sample.json
+golang-logging-library-for-sap は、Output として、本レポジトリ内の sample.json にある、次のような json を出力します。
+```
+{
+	"cursor": "/home/ampamman/go/src/sap-api-integrations-product-master-reads/SAP_API_Caller/caller.go#L108",
+	"function": "sap-api-integrations-product-master-reads/SAP_API_Caller.(*SAPAPICaller).General",
+	"level": "INFO",
+	"message": [
+		{
+			"Product": "A001",
+			"IndustrySector": "M",
+			"ProductType": "SERV",
+			"BaseUnit": "AU",
+			"ValidityStartDate": "",
+			"ProductGroup": "A001",
+			"Division": "00",
+			"GrossWeight": "0.000",
+			"WeightUnit": "KG",
+			"SizeOrDimensionText": "",
+			"ProductStandardID": "",
+			"CreationDate": "2016-06-20T09:00:00+09:00",
+			"LastChangeDate": "2017-04-11T09:00:00+09:00",
+			"IsMarkedForDeletion": false,
+			"NetWeight": "0.000",
+			"ChangeNumber": "",
+			"to_Description": "https://sandbox.api.sap.com/s4hanacloud/sap/opu/odata/sap/API_PRODUCT_SRV/A_Product('A001')/to_Description"
+		}
+	],
+	"time": "2022-01-26T14:51:52.138052513+09:00"
+}
+```
 
 ## 利用方法
 
